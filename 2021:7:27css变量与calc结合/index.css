@@ -1,0 +1,30 @@
+.magnifier {
+  --x: 0;
+  --y: 0;
+  overflow: hidden;
+  position: relative;
+  width: 600px;
+  height: 400px;
+  background: url("https://static.yangzw.vip/codepen/gz.jpg") no-repeat
+    center/100% 100%;
+  cursor: pointer;
+}
+.magnifier::before {
+  --size: 0;
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  border-radius: 100%;
+  width: var(--size);
+  height: var(--size);
+  background: #333 url("https://static.yangzw.vip/codepen/gz.jpg") no-repeat
+    calc(var(--size) / 2 - 2 * var(--x)) calc(var(--size) / 2 - 2 * var(--y)) /
+    1200px 800px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  content: "";
+  will-change: left, top;
+  transform: translate(-50%, -50%);
+}
+.magnifier:hover::before {
+  --size: 100px;
+}
