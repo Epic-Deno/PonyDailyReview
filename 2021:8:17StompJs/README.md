@@ -1,11 +1,6 @@
-/*
- * @Description: StompJs
- * @Author: Pony
- * @Date: 2021-08-17 09:41:56
- * @LastEditors: Pony
- * @LastEditTime: 2021-08-17 09:49:45
- */
-// 建立websocket获取数据
+## 建立websocket获取数据
+
+```
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 
@@ -55,9 +50,9 @@ const buildSocket = ()=>{
      })
 
 }
-
-
-
+```
+### 方式二
+```
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 
@@ -90,8 +85,9 @@ function reconnect(socketUrl) {
         }
     )     
 }
-
-
+```
+#### 细节上的处理
+```
 /*header带参数连接*/
 var headers = {
     login: 'mylogin',
@@ -118,3 +114,68 @@ var sub2 = client.subscribe("queue/another", onmessage)
 var subscription = client.subscribe();
 
 subscription.unsubscribe();// 关闭链接
+```
+
+### vue 当中的写法
+
+
+* 建立连接
+```
+initWebSocket() {
+    const socket = new SockJS(this.socketUrl);
+    this.stompClient = Stomp.over(socket);
+    this.stompClient.connect(
+      // { 'token': this.token }, // 可带参
+      {},
+      () => {
+        this.successCallback(); // 连接成功
+      },
+      () => {
+        this.disconnect(); // 断开连接
+      }
+    );
+  }
+```
+* 连接成功
+```
+successCallback() {
+    console.info("onConnected");
+    this.stompClient.subscribe("/topic/send/error", (val) => {
+      this.showData = val.body; // 接收到的数据
+    });
+  },
+```
+* 断开连接
+```
+  disconnect() {
+    console.log("关闭连接");
+    this.reconnect(this.socketUrl);
+    if (this.stompClient != null) {
+      this.stompClient.disconnect();
+    }
+  },
+```
+* 重新连接
+```
+  reconnect(socketUrl) {
+    console.info("in reconnect function");
+    const socket = new SockJS(socketUrl);
+    this.stompClient = Stomp.over(socket);
+    this.stompClient.connect(
+      {},
+      () => {
+        console.info("reconnected success");
+        // 连接成功
+        console.log("成功");
+        this.successCallback();
+      },
+      () => {
+        // 失败
+        console.log("失败");
+        setTimeout(() => {
+          this.reconnect(this.socketUrl);
+        }, 5000);
+      }
+    );
+  },
+```
