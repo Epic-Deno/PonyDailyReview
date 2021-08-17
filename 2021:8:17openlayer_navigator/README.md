@@ -9,3 +9,13 @@
     3.调用清除的API： removeFeature()
         例如：this.toolLayer['LineString'].removeFeature(targetRoadFeature)
     ```
+## 浏览器关闭时候出发的API
+
+### 主要应用于客户关闭浏览器时候通知后端做一些业务上的处理，发起一个post请求，data可以是字符串可以是base64
+
+    ```
+     window.addEventListener("beforeunload", (e) => {
+        const data = { name: "Pony" };
+        window.navigator.sendBeacon("http://127.0.0.1:3002/loginout", JSON.stringify(data));
+    });
+    ```
