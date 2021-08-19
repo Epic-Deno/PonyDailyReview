@@ -1,0 +1,39 @@
+// 方法一
+const arr = [
+  {title: '123', children: [{name: 'zs'}]},
+  {title: '123', children: [{name: '1233'}]},
+  {title: '124', children: [{name: '1244'}]},
+  {title: '125', children: [{name: '1255'}]},
+  {title: '125', children: [{name: '1256'}]}
+]
+const titleMap = {}
+const transferObj = arr.reduce((prev, next) => {
+  if(titleMap[next.title]) {
+    let targetIndex = prev.findIndex(i => i.title == next.title)
+    prev[targetIndex].children.push(...next.children)
+  } else {
+    titleMap[next.title] = true
+    prev.push(next)
+  }
+  return prev
+}, [])
+
+// 方案二
+let titleList = arr.map(i => {
+  return i['title']
+})
+
+titleList =  [...new Set(titleList)];
+let arr2 = []
+titleList.map(i => {
+  let targetArr = arr.filter(item => item['title'] == i)
+  let children = []
+  targetArr.map(item => {
+    children = children.concat(item['children'])
+  })
+  arr2.push({
+    title: i,
+    children
+  })
+})
+console.log(arr2)
